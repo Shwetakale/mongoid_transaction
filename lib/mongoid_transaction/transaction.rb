@@ -1,17 +1,16 @@
 module MongoidTransaction
   class Transaction
-    def self.transaction(&block)
-      @client =  Mongoid.default_client
+    def self.transaction(isolation_level = "mvcc", &block)
+      @session =  Mongoid.default_session
+      @isolation_level = isolation_level
+      raise 'Invalid isolation level' unless ['mvcc','serializable','readUncommitted'].include? @isolation_level
       yield(block) and return unless transaction_supported?
       begin
         yield(block)
         commit_transaction
-        p "commited"
         true
       rescue Exception => e
         rollback_transaction
-        p e
-        p "rollbacked"
         false
       end
     end
@@ -26,15 +25,15 @@ module MongoidTransaction
     end
 
     def self.begin_transaction
-      @client.command({"beginTransaction" => 1})
+      @session.command({"beginTransaction" => 1, isolation: @isolation_level})
     end
 
     def self.commit_transaction
-      @client.command({"commitTransaction" => 1})
+      @session.command({"commitTransaction" => 1})
     end
 
     def self.rollback_transaction
-      @client.command({"rollbackTransaction" => 1})
+      @session.command({"rollbackTransaction" => 1})
     end
   end
 end
