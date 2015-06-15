@@ -2,9 +2,8 @@ module MongoidTransaction
   class Transaction
     def self.transaction(&block)
       @client =  Mongoid.default_client
-      yield(block) and return if not transaction_supported?
+      yield(block) and return unless transaction_supported?
       begin
-        begin_transaction
         yield(block)
         commit_transaction
         p "commited"
@@ -20,7 +19,6 @@ module MongoidTransaction
     def self.transaction_supported?
       begin
         begin_transaction
-        rollback_transaction
         true
       rescue Exception => e
         false
