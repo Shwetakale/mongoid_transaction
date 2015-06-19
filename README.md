@@ -1,28 +1,30 @@
 # MongoidTransaction
 
-Welcome to your new gem! In this directory, you'll find the files you need to be able to package up your Ruby library into a gem. Put your Ruby code in the file `lib/mongoid_transaction`. To experiment with that code, run `bin/console` for an interactive prompt.
+This gem is for using Transaction API's provided by TokuMx along with mongoid.
 
-TODO: Delete this and the text above, and describe your gem
+##DO NOT USE THIS GEM If you are seeing this line. Work in progress.
 
 ## Installation
+
 
 Add this line to your application's Gemfile:
 
 ```ruby
-gem 'mongoid_transaction'
+gem 'mongoid_transaction', git:'git@github.com:Shwetakale/mongoid_transaction.git'
 ```
 
 And then execute:
 
     $ bundle
 
-Or install it yourself as:
-
-    $ gem install mongoid_transaction
-
 ## Usage
 
-TODO: Write usage instructions here
+    Mongoid::Transaction.execute do
+        User.create!(name: user_name)
+        Parent.create!(name: parent_name)
+    end
+
+Currently only those methods are supported which raises exception on failure. (For ex. create!, update_attributes!, set, update_attribute)
 
 ## Development
 
