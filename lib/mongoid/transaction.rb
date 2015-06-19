@@ -1,11 +1,18 @@
-module MongoidTransaction
+module Mongoid
   class Transaction
-    def self.transaction(isolation_level = "mvcc", &block)
+
+    #Tokumx supports 3 isolation levels. default is mvcc
+    ISOLATIOAN_LEVELS = ['mvcc', 'serializable', 'readUncommitted']
+    def self.execute(isolation_level = "mvcc", &block)
       @session =  Mongoid.default_session
       @isolation_level = isolation_level
-      raise 'Invalid isolation level' unless ['mvcc','serializable','readUncommitted'].include? @isolation_level
+      raise 'Invalid isolation level' unless ISOLATIOAN_LEVELS.include? @isolation_level
+      # If transaction is not supported excute queries by default behaviour of
+      # mongo
       yield(block) and return unless transaction_supported?
       begin
+        # Transaction is started when we called transaction_supported? so yield
+        # block here
         yield(block)
         commit_transaction
         true
