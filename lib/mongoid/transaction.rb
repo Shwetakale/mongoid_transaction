@@ -17,6 +17,7 @@ module Mongoid
         commit_transaction
         true
       rescue Exception => e
+        p e.to_s
         rollback_transaction
         false
       end
@@ -33,14 +34,17 @@ module Mongoid
 
     def self.begin_transaction
       @session.command({"beginTransaction" => 1, isolation: @isolation_level})
+      p "Begin Transaction"
     end
 
     def self.commit_transaction
       @session.command({"commitTransaction" => 1})
+      p "Commit Transaction"
     end
 
     def self.rollback_transaction
       @session.command({"rollbackTransaction" => 1})
+      p "Rollback Transaction"
     end
   end
 end
