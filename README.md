@@ -24,7 +24,13 @@ And then execute:
         Parent.create!(name: parent_name)
     end
 
-Currently only those methods are supported which raise exception on failure. (For ex. create!, update_attributes!, set, update_attribute)
++ Only those methods are supported which raise exception on failure. (For ex. create!, update_attributes!, set, update_attribute)
++ It's developer's responsibility to raise exception in execute block if they
+want to rollback transaction.
++ If you use method which returns false in execute block then transaction won't
+be rolled back.
+
+
 
 ## Development
 
