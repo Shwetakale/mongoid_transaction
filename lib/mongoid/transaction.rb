@@ -5,31 +5,36 @@ module Mongoid
     ISOLATIOAN_LEVELS = ['mvcc', 'serializable', 'readUncommitted']
     def self.execute(isolation_level = "mvcc", &block)
       session =  Mongoid.default_session
-      isolation_level = isolation_level
       raise 'Invalid isolation level' unless ISOLATIOAN_LEVELS.include? isolation_level
       # If transaction is not supported excute queries by default behaviour of
       # mongo
-      yield(block) and return unless transaction_supported?(session, isolation_level)
-      begin
-        # Transaction is started when we called transaction_supported? so yield
-        # block here
-        yield(block)
-        commit_transaction(session)
-        true
-      rescue Exception => e
-        p e
-        rollback_transaction(session)
-        false
+      if transaction_supported?(session, isolation_level)
+        begin
+          # Transaction is started when we called transaction_supported? so yield
+          # block here
+          yield(block)
+          commit_transaction(session)
+        rescue Exception => e
+          rollback_transaction(session) 
+        end
+      else
+        yield(block)  
       end
     end
+
+    private
 
     def self.transaction_supported?(session, isolation_level)
       begin
         begin_transaction(session, isolation_level)
         true
       rescue Exception => e
-        p e
-        false
+        if e.as_json['details']['errmsg'].include? 'no such cmd'
+          false
+        else
+          p e
+          raise e
+        end
       end
     end
 
