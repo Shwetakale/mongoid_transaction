@@ -14,8 +14,10 @@ module Mongoid
           # block here
           yield(block)
           commit_transaction(session)
+          true
         rescue Exception => e
           rollback_transaction(session) 
+          raise e
         end
       else
         yield(block)  
