@@ -34,7 +34,6 @@ module Mongoid
         if e.as_json['details']['errmsg'].include? 'no such cmd'
           false
         else
-          p e
           raise e
         end
       end
@@ -42,17 +41,14 @@ module Mongoid
 
     def self.begin_transaction(session, isolation_level)
       message= session.command({"beginTransaction" => 1, isolation: isolation_level})
-      p message
     end
 
     def self.commit_transaction session
       message = session.command({"commitTransaction" => 1})
-      p message
     end
 
     def self.rollback_transaction session
       message = session.command({"rollbackTransaction" => 1})
-      p message
     end
   end
 end
