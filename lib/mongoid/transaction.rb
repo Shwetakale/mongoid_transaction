@@ -40,15 +40,15 @@ module Mongoid
     end
 
     def self.begin_transaction(session, isolation_level)
-      message= session.command({"beginTransaction" => 1, isolation: isolation_level})
+      message= session.command({beginTransaction: 1, isolation: isolation_level})
     end
 
     def self.commit_transaction session
-      message = session.command({"commitTransaction" => 1})
+      message = session.command({commitTransaction: 1})
     end
 
     def self.rollback_transaction session
-      message = session.command({"rollbackTransaction" => 1})
+      message = session.command({rollbackTransaction: 1})
     end
   end
 end
